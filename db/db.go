@@ -11,7 +11,8 @@ package db
 import (
 	"encoding/json"
 	"os"
-	"tax/models"
+
+	"github.com/marco-mania/tax/models"
 )
 
 var database = make(map[string]models.EinkommensFallBrutto)

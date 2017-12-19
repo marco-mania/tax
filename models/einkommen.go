@@ -14,7 +14,8 @@ import (
 	"io/ioutil"
 	"math"
 	"os"
-	"tax/helpers"
+
+	"github.com/marco-mania/tax/helpers"
 )
 
 // EinkommensFallBrutto fasst die Eingabe-Parameter zusammen

@@ -12,8 +12,9 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"tax/db"
-	"tax/models"
+
+	"github.com/marco-mania/tax/db"
+	"github.com/marco-mania/tax/models"
 )
 
 // TaxHandler ...

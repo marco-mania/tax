@@ -9,9 +9,12 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"net/http"
-	"tax/db"
-	"tax/handlers"
+
+	"github.com/marco-mania/tax/db"
+	"github.com/marco-mania/tax/handlers"
 )
 
 func main() {
@@ -22,6 +25,11 @@ func main() {
 
 	http.HandleFunc("/api/v1/", handlers.TaxHandler)
 
-	http.ListenAndServe("localhost:8001", nil)
+	err := http.ListenAndServe("localhost:8001", nil)
+	if err != nil {
+		log.Fatal("ListenAndServe: ", err)
+	}
+
+	fmt.Println("Service started: Now listening on http://localhost:8001/")
 
 }
