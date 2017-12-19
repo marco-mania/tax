@@ -25,11 +25,11 @@ func main() {
 
 	http.HandleFunc("/api/v1/", handlers.TaxHandler)
 
+	fmt.Println("Service starting: Listen on http://localhost:8001/ ...")
+
 	err := http.ListenAndServe("localhost:8001", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
-
-	fmt.Println("Service started: Now listening on http://localhost:8001/")
 
 }
