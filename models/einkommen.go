@@ -10,13 +10,83 @@ package models
 
 import (
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"math"
-	"os"
 
 	"github.com/marco-mania/tax/helpers"
 )
+
+var parameters = `[
+    {
+        "Jahr": 2016,
+        "KrankenversicherungArbeitnehmeranteil": 0.073,
+        "KrankenversicherungArbeitgeberanteil": 0.073,
+        "KrankenversicherungArbeitnehmeranteilErmaessigt": 0.07,
+        "KrankenversicherungArbeitgeberanteilErmaessigt": 0.07,
+        "RentenversicherungArbeitnehmeranteil": 0.0935,
+        "RentenversicherungArbeitgeberanteil": 0.0935,
+        "KorrekturfaktorTeilVorsorgepauschaleRentenversicherung": 0.64,
+        "ArbeitslosenversicherungArbeitnehmeranteil": 0.015,
+        "ArbeitslosenversicherungArbeitgeberanteil": 0.015,
+        "PflegeversicherungArbeitnehmeranteil": 0.01175,
+        "PflegeversicherungArbeitgeberanteil": 0.01175,
+        "PflegeversicherungZuschlagFuerKinderlose": 0.0025,
+        "BeitragsbemessungsgrenzeKrankenPflegeversicherung": 4275.0,
+        "BeitragsbemessungsgrenzeArbeitslosenRentenversicherung": 6200.0,
+        "z2": 8652.0,
+        "z2a": 0.0000099362,
+        "z2b": 0.14,
+        "z2c": 0.0,
+        "z3": 13669.0,
+        "z3a": 0.000002254,
+        "z3b": 0.2397,
+        "z3c": 952.48,
+        "z4": 53665.0,
+        "z4a": 0.0,
+        "z4b": 0.42,
+        "z4c": -8394.14,
+        "z5": 254446.0,
+        "z5a": 0.0,
+        "z5b": 0.45,
+        "z5c": -16027.52,
+        "Solidaritaetszuschlag": 0.055,
+        "Kirchensteuer": 0.09
+    },
+    {
+        "Jahr": 2017,
+        "KrankenversicherungArbeitnehmeranteil": 0.073,
+        "KrankenversicherungArbeitgeberanteil": 0.073,
+        "KrankenversicherungArbeitnehmeranteilErmaessigt": 0.07,
+        "KrankenversicherungArbeitgeberanteilErmaessigt": 0.07,
+        "RentenversicherungArbeitnehmeranteil": 0.0935,
+        "RentenversicherungArbeitgeberanteil": 0.0935,
+        "KorrekturfaktorTeilVorsorgepauschaleRentenversicherung": 0.68,
+        "ArbeitslosenversicherungArbeitnehmeranteil": 0.015,
+        "ArbeitslosenversicherungArbeitgeberanteil": 0.015,
+        "PflegeversicherungArbeitnehmeranteil": 0.01275,
+        "PflegeversicherungArbeitgeberanteil": 0.01275,
+        "PflegeversicherungZuschlagFuerKinderlose": 0.0025,
+        "BeitragsbemessungsgrenzeKrankenPflegeversicherung": 4350.0,
+        "BeitragsbemessungsgrenzeArbeitslosenRentenversicherung": 6350.0,
+        "z2": 8820.0,
+        "z2a": 0.0000100727,
+        "z2b": 0.14,
+        "z2c": 0.0,
+        "z3": 13769.0,
+        "z3a": 0.0000022376,
+        "z3b": 0.2397,
+        "z3c": 939.57,
+        "z4": 54057.0,
+        "z4a": 0.0,
+        "z4b": 0.42,
+        "z4c": -8475.44,
+        "z5": 256303.0,
+        "z5a": 0.0,
+        "z5b": 0.45,
+        "z5c": -16164.53,
+        "Solidaritaetszuschlag": 0.055,
+        "Kirchensteuer": 0.09
+    }
+]`
 
 // EinkommensFallBrutto fasst die Eingabe-Parameter zusammen
 type EinkommensFallBrutto struct {
@@ -268,14 +338,8 @@ func berechne(fall EinkommensFallBrutto, param Parameter) EinkommensFallNetto {
 
 func getParameters() []Parameter {
 
-	data, err := ioutil.ReadFile("./parameters.json")
-	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
-	}
-
 	var p []Parameter
-	json.Unmarshal(data, &p)
+	json.Unmarshal([]byte(parameters), &p)
 	return p
 
 }
