@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>TAX App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="bootstrap-4.0.0-beta.2/css/bootstrap.min.css">
+  <script src="jquery-3.2.1.min.js"></script>
+  <script src="popper-1.12.3.min.js"></script>
+  <script src="bootstrap-4.0.0-beta.2/js/bootstrap.min.js"></script>
+  <script src="knockout-3.4.2.js"></script>
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <a class="brand" href="#">TAX App</a>
+        </div>
+    </div>
+    <div id="main" class="container">
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th><b>Bezeichnung</b></th>
+                        <th><b>Brutto (EUR)</b></th>
+                        <th><b>Listenpreis (EUR)</b></th>
+                        <th><b>Netto (EUR)</b></th>
+                        <th><b>Netto ohne Firmenwagen (EUR)</b></th>
+                        <th><b>Netto-Differenz (EUR)</b></th>
+                        <th><b>Operationen</b></th>
+                    </tr>
+                </thead>
+
+                <tbody data-bind="foreach: einkommensfaelle">
+                    <tr>
+                        <td><p><b data-bind="text: ID"></b></p></td>
+                        <td><p data-bind="text: EinkommenBruttoMonEur"></p></td>
+                        <td><p data-bind="text: FirmenwagenBruttolistenpreisEur"></p></td>
+                        <td><p data-bind="text: EinkommenNettoMonEur"></p></td>
+                        <td><p data-bind="text: EinkommenNettoOhneFirmenwagenMonEur"></p></td>
+                        <td><p data-bind="text: EinkommenDifferenzEur"></p></td>
+                        <td>
+                            <button data-bind="click: $parent.beginUpdateBruttoEinkommensFall" type="button" class="btn btn-secondary btn-sm">Bearbeiten</button>
+                            <button data-bind="click: $parent.showDetailEinkommensFall" type="button" class="btn btn-secondary btn-sm">Details</button>
+                            <button data-bind="click: $parent.removeEinkommensFall" type="button" class="btn btn-outline-danger btn-sm">Entfernen</button>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        
+            <button data-bind="click: beginAdd" type="button" class="btn btn-primary">Einkommensfall hinzufügen</button>
+
+    </div>
+
+    <div id="add" class="modal fade" tabindex="=1" role="dialog" aria-labelledby="addDialogLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addDialogLabel">Einkommensfall hinzufügen</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="control-group">
+                            <label class="control-label" for="inputID">Bezeichnung</label>
+                            <div class="controls">
+                                <input data-bind="value: ID" type="text" id="inputID" placeholder="Bezeichnung" style="width: 150px;">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputJahr">Jahr</label>
+                            <div class="controls">
+                                    <select data-bind="options: years, optionsCaption: 'Wählen...', value: Jahr, valueAllowUnset: false"></select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputSteuerklasse">Steuerklasse</label>
+                            <div class="controls">
+                                    <select data-bind="options: taxclasses, optionsCaption: 'Wählen...', value: Steuerklasse, valueAllowUnset: false"></select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputEinkommenBruttoMonEur">Brutto-Einkommen p.M. (EUR)</label>
+                            <div class="controls">
+                                <input data-bind="value: EinkommenBruttoMonEur" type="number" id="inputEinkommenBruttoMonEur" placeholder="Euro" style="width: 300px;">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputFirmenwagenBruttolistenpreisEur">Bruttolistenneupreis Firmenwagen (EUR)</label>
+                            <div class="controls">
+                                <input data-bind="value: FirmenwagenBruttolistenpreisEur" type="number" id="inputFirmenwagenBruttolistenpreisEur" placeholder="Euro" style="width: 300px;">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputEntfernungWohnortArbeitsortKM">Entfernung Wohnort/Arbeitsort (km)</label>
+                            <div class="controls">
+                                <input data-bind="value: EntfernungWohnortArbeitsortKM" type="number" id="inputEntfernungWohnortArbeitsortKM" placeholder="km" style="width: 300px;">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputCarAllowanceEur">Car Allowance (EUR)</label>
+                            <div class="controls">
+                                <input data-bind="value: CarAllowanceEur" type="number" id="inputCarAllowanceEur" placeholder="Euro" style="width: 300px;">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputZusatzbeitragKrankenkasseProzent">Zusatzbeitrag Krankenkasse (%)</label>
+                            <div class="controls">
+                                <input data-bind="value: ZusatzbeitragKrankenkasseProzent" type="number" id="inputZusatzbeitragKrankenkasseProzent" placeholder="%" style="width: 300px;">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputKinder">Kinder</label>
+                            <div class="controls">
+                                <input data-bind="checked: Kinder" type="checkbox" id="inputKinder">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputKirche">Kirchenmitglied</label>
+                            <div class="controls">
+                                <input data-bind="checked: Kirche" type="checkbox" id="inputKirche">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">Abbrechen</button>
+                    <button data-bind="click: addEinkommensFall" class="btn btn-primary">Hinzufügen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="update" class="modal fade" tabindex="=1" role="dialog" aria-labelledby="updateDialogLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateDialogLabel">Einkommensfall barbeiten</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="control-group">
+                            <label class="control-label" for="inputID">Bezeichnung</label>
+                            <div class="controls">
+                                <input data-bind="value: ID" type="text" id="inputID" placeholder="Bezeichnung" style="width: 150px;">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputJahr">Jahr</label>
+                            <div class="controls">
+                                    <select data-bind="options: years, optionsCaption: 'Wählen...', value: Jahr, valueAllowUnset: false"></select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputSteuerklasse">Steuerklasse</label>
+                            <div class="controls">
+                                    <select data-bind="options: taxclasses, optionsCaption: 'Wählen...', value: Steuerklasse, valueAllowUnset: false"></select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputEinkommenBruttoMonEur">Brutto-Einkommen p.M. (EUR)</label>
+                            <div class="controls">
+                                <input data-bind="value: EinkommenBruttoMonEur" type="number" id="inputEinkommenBruttoMonEur" placeholder="Euro" style="width: 300px;">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputFirmenwagenBruttolistenpreisEur">Bruttolistenneupreis Firmenwagen (EUR)</label>
+                            <div class="controls">
+                                <input data-bind="value: FirmenwagenBruttolistenpreisEur" type="number" id="inputFirmenwagenBruttolistenpreisEur" placeholder="Euro" style="width: 300px;">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputEntfernungWohnortArbeitsortKM">Entfernung Wohnort/Arbeitsort (km)</label>
+                            <div class="controls">
+                                <input data-bind="value: EntfernungWohnortArbeitsortKM" type="number" id="inputEntfernungWohnortArbeitsortKM" placeholder="km" style="width: 300px;">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputCarAllowanceEur">Car Allowance (EUR)</label>
+                            <div class="controls">
+                                <input data-bind="value: CarAllowanceEur" type="number" id="inputCarAllowanceEur" placeholder="Euro" style="width: 300px;">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputZusatzbeitragKrankenkasseProzent">Zusatzbeitrag Krankenkasse (%)</label>
+                            <div class="controls">
+                                <input data-bind="value: ZusatzbeitragKrankenkasseProzent" type="number" id="inputZusatzbeitragKrankenkasseProzent" placeholder="%" style="width: 300px;">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputKinder">Kinder</label>
+                            <div class="controls">
+                                <input data-bind="checked: Kinder" type="checkbox" id="inputKinder">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputKirche">Kirchenmitglied</label>
+                            <div class="controls">
+                                <input data-bind="checked: Kirche" type="checkbox" id="inputKirche">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">Abbrechen</button>
+                    <button data-bind="click: updateEinkommensFall" class="btn btn-primary">Speichern</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="details" class="modal fade" tabindex="=1" role="dialog" aria-labelledby="detailsDialogLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="detailsDialogLabel">Einkommensfall Details</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">Bezeichnung:</th>
+                                    <td><span data-bind="text: ID"></td>
+                                </tr>
+                                <tr>
+                                    <th class="table-primary" scope="row">Nettoeinkommen p.M.:</span></th>
+                                    <td class="table-primary"><span data-bind="text: EinkommenNettoMonEur"></span> EUR</td>
+                                </tr>
+                                <tr>
+                                    <th class="table-primary" scope="row">Nettoeinkommen p.M. (ohne Firmenwagen):</span></th>
+                                    <td class="table-primary"><span data-bind="text: EinkommenNettoOhneFirmenwagenMonEur"></span> EUR</td>
+                                </tr>
+                                <tr>
+                                    <th class="table-primary" scope="row">Netto-Differenz p.M.:</span></th>
+                                    <td class="table-primary"><span data-bind="text: EinkommenDifferenzEur"></span> EUR</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Geldwerter Vorteil Firmenwagen p.M.:</span></th>
+                                    <td><span data-bind="text: GeldwerterVorteilFirmenwagenMonEur"></span> EUR</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Entfernung Wohnort/Arbeitsort:</span></th>
+                                    <td><span data-bind="text: EntfernungWohnortArbeitsortKM"></span> km</td>
+                                </tr>
+                                <tr>
+                                    <th class="table-secondary" scope="row">Beitrag Krankenversicherung p.M.:</span></th>
+                                    <td class="table-secondary"><span data-bind="text: KVBeitragMonEur"></span> EUR</td>
+                                </tr>
+                                <tr>
+                                    <th class="table-secondary" scope="row">Beitrag Rentenversicherung p.M.:</span></th>
+                                    <td class="table-secondary"><span data-bind="text: RVBeitragMonEur"></span> EUR</td>
+                                </tr>
+                                <tr>
+                                    <th class="table-secondary" scope="row">Beitrag Arbeitslosenversicherung p.M.:</span></th>
+                                    <td class="table-secondary"><span data-bind="text: AVBeitragMonEur"></span> EUR</td>
+                                </tr>
+                                <tr>
+                                    <th class="table-secondary" scope="row">Beitrag Rentenversicherung p.M.:</span></th>
+                                    <td class="table-secondary"><span data-bind="text: RVBeitragMonEur"></span> EUR</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Lohnsteuer p.M.:</span></th>
+                                    <td><span data-bind="text: LohnsteuerMonEur"></span> EUR</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Kirchensteuer p.M.:</span></th>
+                                    <td><span data-bind="text: KirchensteuerMonEur"></span> EUR</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Solidaritätszuschlag p.M.:</span></th>
+                                    <td><span data-bind="text: SolZuschlagMonEur"></span> EUR</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Schließen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<script>
+
+    // TAX
+    // Copyright (C) 2017 Marco Nelles, credativ GmbH
+    // <https://github.com/marco-mania/tax>
+
+    // This Source Code Form is subject to the terms of the Mozilla Public
+    // License, v. 2.0. If a copy of the MPL was not distributed with this file,
+    // You can obtain one at https://mozilla.org/MPL/2.0/.
+
+    ko.extenders.numeric = function(target, precision) {
+        //create a writable computed observable to intercept writes to our observable
+        var result = ko.pureComputed({
+            read: target,  //always return the original observables value
+            write: function(newValue) {
+                var current = target(),
+                    roundingMultiplier = Math.pow(10, precision),
+                    newValueAsNum = isNaN(newValue) ? 0 : +newValue,
+                    valueToWrite = Math.round(newValueAsNum * roundingMultiplier) / roundingMultiplier;
+     
+                //only write if it changed
+                if (valueToWrite !== current) {
+                    target(valueToWrite);
+                } else {
+                    //if the rounded value is the same, but a different value was written, force a notification for the current field
+                    if (newValue !== current) {
+                        target.notifySubscribers(valueToWrite);
+                    }
+                }
+            }
+        }).extend({ notify: 'always' });
+     
+        //initialize with current value to make sure it is rounded appropriately
+        result(target());
+     
+        //return the new computed observable
+        return result;
+    };
+
+    function EinkommensFaelleViewModel() {
+        var self = this;
+        self.APIURI = '/api/v1/';
+        self.einkommensfaelle = ko.observableArray();
+
+        self.ajax = function(uri, method, data) {
+            var request = {
+                url: uri,
+                type: method,
+                contentType: "application/json",
+                accepts: "application/json",
+                cache: false,
+                dataType: 'json',
+                data: JSON.stringify(data),
+                error: function(jqXHR) {
+                    console.log("ajax error " + jqXHR.status);
+                }
+            };
+            return $.ajax(request);
+        }
+
+        self.addEinkommensFall = function(data) {
+            self.einkommensfaelle.push({
+                ID: ko.observable(data.Brutto.ID),
+                Jahr: ko.observable(data.Brutto.Jahr),
+                Steuerklasse: ko.observable(data.Brutto.Steuerklasse),
+                EinkommenBruttoMonEur: ko.observable(data.Brutto.EinkommenBruttoMonEur),
+                FirmenwagenBruttolistenpreisEur: ko.observable(data.Brutto.FirmenwagenBruttolistenpreisEur.toFixed(2)),
+                EntfernungWohnortArbeitsortKM: data.Brutto.EntfernungWohnortArbeitsortKM,
+                CarAllowanceEur: data.Brutto.CarAllowanceEur,
+                ZusatzbeitragKrankenkasseProzent: data.Brutto.ZusatzbeitragKrankenkasseProzent,
+                Kinder: data.Brutto.Kinder,
+                Kirche: data.Brutto.Kirche,
+                EinkommenNettoMonEur: ko.observable(data.Netto.EinkommenNettoMonEur.toFixed(2)),
+                EinkommenNettoOhneFirmenwagenMonEur: ko.observable(data.Netto.EinkommenNettoOhneFirmenwagenMonEur.toFixed(2)),
+                EinkommenDifferenzEur: ko.observable(data.Netto.EinkommenDifferenzEur.toFixed(2)),
+                GeldwerterVorteilFirmenwagenMonEur: data.Netto.GeldwerterVorteilFirmenwagenMonEur,
+                KVBeitragMonEur: data.Netto.KVBeitragMonEur,
+                RVBeitragMonEur: data.Netto.RVBeitragMonEur,
+                AVBeitragMonEur: data.Netto.AVBeitragMonEur,
+                PVBeitragMonEur: data.Netto.PVBeitragMonEur,
+                LohnsteuerMonEur: data.Netto.LohnsteuerMonEur,
+                KirchensteuerMonEur: data.Netto.KirchensteuerMonEur,
+                SolZuschlagMonEur: data.Netto.SolZuschlagMonEur
+            });
+        }
+        self.removeEinkommensFall = function(fall) {
+            self.ajax(self.APIURI + fall.ID(), 'DELETE').done(function() {
+                self.einkommensfaelle.remove(fall);
+            });
+            /*alert("Entfernen: " + this.ID());*/
+        }
+        self.updateEinkommensFall = function(fall) {
+            var index = -1;
+            for (var i = 0; i < self.einkommensfaelle().length; i++) {
+                if (self.einkommensfaelle()[i].ID() == fall.Brutto.ID) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index > -1) {
+                self.einkommensfaelle()[index].ID(fall.Brutto.ID);
+                self.einkommensfaelle()[index].Jahr(fall.Brutto.Jahr);
+                self.einkommensfaelle()[index].Steuerklasse(fall.Brutto.Steuerklasse);
+                self.einkommensfaelle()[index].EinkommenBruttoMonEur(fall.Brutto.EinkommenBruttoMonEur);
+                self.einkommensfaelle()[index].FirmenwagenBruttolistenpreisEur(fall.Brutto.FirmenwagenBruttolistenpreisEur);
+                self.einkommensfaelle()[index].EntfernungWohnortArbeitsortKM = fall.Brutto.EntfernungWohnortArbeitsortKM;
+                self.einkommensfaelle()[index].CarAllowanceEur = fall.Brutto.CarAllowanceEur;
+                self.einkommensfaelle()[index].ZusatzbeitragKrankenkasseProzent = fall.Brutto.ZusatzbeitragKrankenkasseProzent;
+                self.einkommensfaelle()[index].Kinder = fall.Brutto.Kinder;
+                self.einkommensfaelle()[index].Kirche = fall.Brutto.Kirche;
+                self.einkommensfaelle()[index].EinkommenNettoMonEur(fall.Netto.EinkommenNettoMonEur);
+                self.einkommensfaelle()[index].EinkommenNettoOhneFirmenwagenMonEur(fall.Netto.EinkommenNettoOhneFirmenwagenMonEur);
+                self.einkommensfaelle()[index].EinkommenDifferenzEur(fall.Netto.EinkommenDifferenzEur);
+                self.einkommensfaelle()[index].GeldwerterVorteilFirmenwagenMonEur = fall.Netto.GeldwerterVorteilFirmenwagenMonEur;
+                self.einkommensfaelle()[index].KVBeitragMonEur = fall.Netto.KVBeitragMonEur;
+                self.einkommensfaelle()[index].RVBeitragMonEur = fall.Netto.RVBeitragMonEur;
+                self.einkommensfaelle()[index].AVBeitragMonEur = fall.Netto.AVBeitragMonEur;
+                self.einkommensfaelle()[index].PVBeitragMonEur = fall.Netto.PVBeitragMonEur;
+                self.einkommensfaelle()[index].LohnsteuerMonEur = fall.Netto.LohnsteuerMonEur;
+                self.einkommensfaelle()[index].KirchensteuerMonEur = fall.Netto.KirchensteuerMonEur;
+                self.einkommensfaelle()[index].SolZuschlagMonEur = fall.Netto.SolZuschlagMonEur;
+            }
+        }
+        self.loadEinkommensFaelle = function(data) {
+            if (data == null) return;
+            for (var i = 0; i < data.length; i++) {
+                self.addEinkommensFall(data[i])
+            }
+        }
+
+        self.ajax(self.APIURI, 'GET').done(function(data) {
+            self.loadEinkommensFaelle(data);
+        });
+
+        self.beginAdd = function() {
+            $('#add').modal('show');
+        }
+        self.beginUpdateBruttoEinkommensFall = function(fall) {
+            updateEinkommensFallViewModel.setEinkommensfall({
+                ID: fall.ID(),
+                Jahr: fall.Jahr(),
+                Steuerklasse: fall.Steuerklasse(),
+                EinkommenBruttoMonEur: fall.EinkommenBruttoMonEur(),
+                FirmenwagenBruttolistenpreisEur: fall.FirmenwagenBruttolistenpreisEur(),
+                EntfernungWohnortArbeitsortKM: fall.EntfernungWohnortArbeitsortKM,
+                CarAllowanceEur: fall.CarAllowanceEur,
+                ZusatzbeitragKrankenkasseProzent: fall.ZusatzbeitragKrankenkasseProzent,
+                Kinder: fall.Kinder,
+                Kirche: fall.Kirche
+            });
+            $('#update').modal('show');
+        }
+        self.showDetailEinkommensFall = function(fall) {
+            detailsEinkommensFallViewModel.setEinkommensfall({
+                ID: fall.ID(),
+                Jahr: fall.Jahr(),
+                Steuerklasse: fall.Steuerklasse(),
+                EinkommenBruttoMonEur: fall.EinkommenBruttoMonEur(),
+                FirmenwagenBruttolistenpreisEur: fall.FirmenwagenBruttolistenpreisEur(),
+                EntfernungWohnortArbeitsortKM: fall.EntfernungWohnortArbeitsortKM,
+                CarAllowanceEur: fall.CarAllowanceEur,
+                ZusatzbeitragKrankenkasseProzent: fall.ZusatzbeitragKrankenkasseProzent,
+                Kinder: fall.Kinder,
+                Kirche: fall.Kirche,
+                EinkommenNettoMonEur: fall.EinkommenNettoMonEur(),
+                EinkommenNettoOhneFirmenwagenMonEur: fall.EinkommenNettoOhneFirmenwagenMonEur(),
+                EinkommenDifferenzEur: fall.EinkommenDifferenzEur(),
+                GeldwerterVorteilFirmenwagenMonEur: fall.GeldwerterVorteilFirmenwagenMonEur,
+                KVBeitragMonEur: fall.KVBeitragMonEur,
+                RVBeitragMonEur: fall.RVBeitragMonEur,
+                AVBeitragMonEur: fall.AVBeitragMonEur,
+                PVBeitragMonEur: fall.PVBeitragMonEur,
+                LohnsteuerMonEur: fall.LohnsteuerMonEur,
+                KirchensteuerMonEur: fall.KirchensteuerMonEur,
+                SolZuschlagMonEur: fall.SolZuschlagMonEur
+            });
+            $('#details').modal('show');
+        }
+
+        self.addBruttoEinkommensfall = function(bruttoeinkommensfall) {
+            self.ajax(self.APIURI, 'POST', bruttoeinkommensfall).done(function() {
+                self.ajax(self.APIURI + bruttoeinkommensfall.ID, 'GET').done(function(data) { 
+                    self.addEinkommensFall(data)
+                });
+            });
+        }
+        self.updateBruttoEinkommensfall = function(bruttoeinkommensfall) {
+            self.ajax(self.APIURI + bruttoeinkommensfall.ID, 'PUT', bruttoeinkommensfall).done(function() {
+                self.ajax(self.APIURI + bruttoeinkommensfall.ID, 'GET').done(function(data) { 
+                    self.updateEinkommensFall(data)
+                });
+            });
+        }
+
+    }
+
+    function AddEinkommensFallViewModel() {
+
+        var self = this;
+        self.years = [2016, 2017];
+        self.taxclasses = [1, 4];
+
+        self.ID = ko.observable();
+        self.Jahr = ko.observable();
+        self.Steuerklasse = ko.observable();
+        self.EinkommenBruttoMonEur = ko.observable().extend({ numeric: 2 });
+        self.FirmenwagenBruttolistenpreisEur = ko.observable().extend({ numeric: 0 });
+        self.EntfernungWohnortArbeitsortKM = ko.observable().extend({ numeric: 0 });
+        self.CarAllowanceEur = ko.observable().extend({ numeric: 2 });
+        self.ZusatzbeitragKrankenkasseProzent = ko.observable().extend({ numeric: 1 });
+        self.Kinder = ko.observable();
+        self.Kirche = ko.observable();
+
+        self.addEinkommensFall = function() {
+            $('#add').modal('hide');
+            einkommensfaelleViewModel.addBruttoEinkommensfall({
+                ID: self.ID(),
+                Jahr: self.Jahr(),
+                Steuerklasse: self.Steuerklasse(),
+                EinkommenBruttoMonEur: self.EinkommenBruttoMonEur(),
+                FirmenwagenBruttolistenpreisEur: self.FirmenwagenBruttolistenpreisEur(),
+                EntfernungWohnortArbeitsortKM: self.EntfernungWohnortArbeitsortKM(),
+                CarAllowanceEur: self.CarAllowanceEur(),
+                ZusatzbeitragKrankenkasseProzent: self.ZusatzbeitragKrankenkasseProzent(),
+                Kinder: self.Kinder(),
+                Kirche: self.Kirche()
+            });
+        }
+
+    }
+
+    function UpdateEinkommensFallViewModel() {
+
+        var self = this;
+        self.years = [2016, 2017];
+        self.taxclasses = [1, 4];
+        
+        self.ID = ko.observable();
+        self.Jahr = ko.observable();
+        self.Steuerklasse = ko.observable();
+        self.EinkommenBruttoMonEur = ko.observable().extend({ numeric: 2 });
+        self.FirmenwagenBruttolistenpreisEur = ko.observable().extend({ numeric: 0 });
+        self.EntfernungWohnortArbeitsortKM = ko.observable().extend({ numeric: 0 });
+        self.CarAllowanceEur = ko.observable().extend({ numeric: 2 });
+        self.ZusatzbeitragKrankenkasseProzent = ko.observable().extend({ numeric: 1 });
+        self.Kinder = ko.observable();
+        self.Kirche = ko.observable();
+
+        self.setEinkommensfall = function(fall) {
+            self.ID(fall.ID);
+            self.Jahr(fall.Jahr);
+            self.Steuerklasse(fall.Steuerklasse);
+            self.EinkommenBruttoMonEur(fall.EinkommenBruttoMonEur);
+            self.FirmenwagenBruttolistenpreisEur(fall.FirmenwagenBruttolistenpreisEur);
+            self.EntfernungWohnortArbeitsortKM(fall.EntfernungWohnortArbeitsortKM);
+            self.CarAllowanceEur(fall.CarAllowanceEur);
+            self.ZusatzbeitragKrankenkasseProzent(fall.ZusatzbeitragKrankenkasseProzent);
+            self.Kinder(fall.Kinder);
+            self.Kirche(fall.Kirche);
+            $('update').modal('show');
+        }
+        
+        self.updateEinkommensFall = function() {
+            $('#update').modal('hide');
+            einkommensfaelleViewModel.updateBruttoEinkommensfall({
+                ID: self.ID(),
+                Jahr: self.Jahr(),
+                Steuerklasse: self.Steuerklasse(),
+                EinkommenBruttoMonEur: self.EinkommenBruttoMonEur(),
+                FirmenwagenBruttolistenpreisEur: self.FirmenwagenBruttolistenpreisEur(),
+                EntfernungWohnortArbeitsortKM: self.EntfernungWohnortArbeitsortKM(),
+                CarAllowanceEur: self.CarAllowanceEur(),
+                ZusatzbeitragKrankenkasseProzent: self.ZusatzbeitragKrankenkasseProzent(),
+                Kinder: self.Kinder(),
+                Kirche: self.Kirche()
+            });
+        }
+        
+    }
+
+    function DetailsEinkommensFallViewModel() {
+
+        var self = this;
+
+        self.ID = ko.observable();
+        self.Jahr = ko.observable();
+        self.Steuerklasse = ko.observable();
+        self.EinkommenBruttoMonEur = ko.observable().extend({ numeric: 2 });
+        self.FirmenwagenBruttolistenpreisEur = ko.observable().extend({ numeric: 0 });
+        self.EntfernungWohnortArbeitsortKM = ko.observable().extend({ numeric: 0 });
+        self.CarAllowanceEur = ko.observable().extend({ numeric: 2 });
+        self.ZusatzbeitragKrankenkasseProzent = ko.observable().extend({ numeric: 1 });
+        self.Kinder = ko.observable();
+        self.Kirche = ko.observable();
+        self.EinkommenNettoMonEur = ko.observable().extend({ numeric: 2 });
+        self.EinkommenNettoOhneFirmenwagenMonEur = ko.observable().extend({ numeric: 2 });
+        self.EinkommenDifferenzEur = ko.observable().extend({ numeric: 2 });
+        self.GeldwerterVorteilFirmenwagenMonEur = ko.observable().extend({ numeric: 2 });
+        self.KVBeitragMonEur = ko.observable().extend({ numeric: 2 });
+        self.RVBeitragMonEur = ko.observable().extend({ numeric: 2 });
+        self.AVBeitragMonEur = ko.observable().extend({ numeric: 2 });
+        self.PVBeitragMonEur = ko.observable().extend({ numeric: 2 });
+        self.LohnsteuerMonEur = ko.observable().extend({ numeric: 2 });
+        self.KirchensteuerMonEur = ko.observable().extend({ numeric: 2 });
+        self.SolZuschlagMonEur = ko.observable().extend({ numeric: 2 });
+
+        self.setEinkommensfall = function(fall) {
+            self.ID(fall.ID);
+            self.Jahr(fall.Jahr);
+            self.Steuerklasse(fall.Steuerklasse);
+            self.EinkommenBruttoMonEur(fall.EinkommenBruttoMonEur);
+            self.FirmenwagenBruttolistenpreisEur(fall.FirmenwagenBruttolistenpreisEur);
+            self.EntfernungWohnortArbeitsortKM(fall.EntfernungWohnortArbeitsortKM);
+            self.CarAllowanceEur(fall.CarAllowanceEur);
+            self.ZusatzbeitragKrankenkasseProzent(fall.ZusatzbeitragKrankenkasseProzent);
+            self.Kinder(fall.Kinder);
+            self.Kirche(fall.Kirche);
+            self.EinkommenNettoMonEur(fall.EinkommenNettoMonEur);
+            self.EinkommenNettoOhneFirmenwagenMonEur(fall.EinkommenNettoOhneFirmenwagenMonEur);
+            self.EinkommenDifferenzEur(fall.EinkommenDifferenzEur);
+            self.GeldwerterVorteilFirmenwagenMonEur(fall.GeldwerterVorteilFirmenwagenMonEur);
+            self.KVBeitragMonEur(fall.KVBeitragMonEur);
+            self.RVBeitragMonEur(fall.RVBeitragMonEur);
+            self.AVBeitragMonEur(fall.AVBeitragMonEur);
+            self.PVBeitragMonEur(fall.PVBeitragMonEur);
+            self.LohnsteuerMonEur(fall.LohnsteuerMonEur);
+            self.KirchensteuerMonEur(fall.KirchensteuerMonEur);
+            self.SolZuschlagMonEur(fall.SolZuschlagMonEur);
+            $('update').modal('show');
+        }
+
+    }
+
+    var einkommensfaelleViewModel = new EinkommensFaelleViewModel();
+    var addEinkommensFallViewModel = new AddEinkommensFallViewModel();
+    var updateEinkommensFallViewModel = new UpdateEinkommensFallViewModel();
+    var detailsEinkommensFallViewModel = new DetailsEinkommensFallViewModel();
+    ko.applyBindings(einkommensfaelleViewModel, $('#main')[0]);
+    ko.applyBindings(addEinkommensFallViewModel, $('#add')[0]);
+    ko.applyBindings(updateEinkommensFallViewModel, $('#update')[0]);
+    ko.applyBindings(detailsEinkommensFallViewModel, $('#details')[0]);
+
+</script>
+
+</body>
+</html>
