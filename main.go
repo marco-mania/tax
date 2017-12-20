@@ -23,16 +23,19 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gobuffalo/packr"
 	"github.com/marco-mania/tax/handlers"
 )
 
 func main() {
 
-	http.Handle("/", http.FileServer(http.Dir("./app/web")))
+	box := packr.NewBox("./app/web")
+
+	http.Handle("/", http.FileServer(box))
 
 	http.HandleFunc("/api/v1/", handlers.TaxHandler)
 
-	fmt.Println("Service starting: Listen on http://localhost:8001/ ...")
+	fmt.Println("Service TAX v1 (API v1) starting and listen on http://localhost:8001/ ...")
 
 	err := http.ListenAndServe("localhost:8001", nil)
 	if err != nil {
