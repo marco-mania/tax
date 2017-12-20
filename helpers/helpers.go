@@ -20,6 +20,7 @@ package helpers
 
 import (
 	"math"
+	"os"
 )
 
 // Round - Auf ganze Zahl runden
@@ -40,5 +41,19 @@ func Round2(f float64) float64 {
 func Floor2(f float64) float64 {
 
 	return math.Floor(f*100.0) / 100.0
+
+}
+
+// Exists - Prüfen, ob Datei/Verzeichnis existiert
+func Exists(path string) (bool, error) {
+
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return true, err
 
 }

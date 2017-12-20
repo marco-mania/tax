@@ -1,3 +1,5 @@
+// +build darwin
+
 /* TAX - Simple german tax calculator web app
  * Copyright (C) 2017 Marco Nelles, credativ GmbH
  * <https://github.com/marco-mania/tax>
@@ -16,27 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package main
+package configdir
 
-import (
-	"fmt"
-	"log"
-	"net/http"
+import "os"
 
-	"github.com/marco-mania/tax/handlers"
-)
-
-func main() {
-
-	http.Handle("/", http.FileServer(http.Dir("./app/web")))
-
-	http.HandleFunc("/api/v1/", handlers.TaxHandler)
-
-	fmt.Println("Service starting: Listen on http://localhost:8001/ ...")
-
-	err := http.ListenAndServe("localhost:8001", nil)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
-	}
-
-}
+// ConfigDir ...
+var ConfigDir = os.Getenv("HOME") + "/Library/Application Support"

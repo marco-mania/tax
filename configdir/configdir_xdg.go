@@ -1,3 +1,5 @@
+// +build linux
+
 /* TAX - Simple german tax calculator web app
  * Copyright (C) 2017 Marco Nelles, credativ GmbH
  * <https://github.com/marco-mania/tax>
@@ -16,27 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package main
+package configdir
 
 import (
-	"fmt"
-	"log"
-	"net/http"
-
-	"github.com/marco-mania/tax/handlers"
+	"os"
+	"path/filepath"
 )
 
-func main() {
+// https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 
-	http.Handle("/", http.FileServer(http.Dir("./app/web")))
+// ConfigDir ...
+var ConfigDir string
 
-	http.HandleFunc("/api/v1/", handlers.TaxHandler)
-
-	fmt.Println("Service starting: Listen on http://localhost:8001/ ...")
-
-	err := http.ListenAndServe("localhost:8001", nil)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
+func init() {
+	if os.Getenv("XDG_CONFIG_HOME") != "" {
+		ConfigDir = os.Getenv("XDG_CONFIG_HOME")
+	} else {
+		ConfigDir = filepath.Join(os.Getenv("HOME"), ".config")
 	}
-
 }

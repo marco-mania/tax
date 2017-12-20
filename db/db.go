@@ -21,15 +21,22 @@ package db
 import (
 	"encoding/json"
 	"os"
+	"path"
 
+	"github.com/marco-mania/tax/configdir"
+	"github.com/marco-mania/tax/helpers"
 	"github.com/marco-mania/tax/models"
 )
 
 var database = make(map[string]models.EinkommensFallBrutto)
-var jsonfile = "db.json"
+var jsonfile = configdir.ConfigDir + "/tax/db.json"
 
-// Init ...
-func Init() {
+func init() {
+	configDirTax := path.Dir(jsonfile)
+	exists, _ := helpers.Exists(configDirTax)
+	if !exists {
+		os.MkdirAll(configDirTax, 0755)
+	}
 	readJSONDBFile()
 }
 
