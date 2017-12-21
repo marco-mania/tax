@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>TAX App v1</title>
+  <title>TAX App v2</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="bootstrap-4.0.0-beta.2/css/bootstrap.min.css">
   <script src="jquery-3.2.1.min.js"></script>
@@ -14,7 +14,7 @@
 <body>
     <div class="navbar">
         <div class="navbar-inner">
-            <a class="brand" href="#">TAX App v1</a>
+            <a class="brand" href="#">TAX App v2</a>
         </div>
     </div>
     <div id="main" class="container">
@@ -26,15 +26,15 @@
                         <th><b>Brutto (EUR)</b></th>
                         <th><b>Listenpreis (EUR)</b></th>
                         <th><b>Netto (EUR)</b></th>
-                        <th><b>Netto ohne Firmenwagen (EUR)</b></th>
-                        <th><b>Netto-Differenz (EUR)</b></th>
+                        <th><b>Netto ohne (EUR)</b></th>
+                        <th><b>Differenz (EUR)</b></th>
                         <th><b>Operationen</b></th>
                     </tr>
                 </thead>
 
-                <tbody data-bind="foreach: einkommensfaelle">
+                <tbody data-bind="foreach: sortedEinkommensfaelle">
                     <tr>
-                        <td><p><b data-bind="text: ID"></b></p></td>
+                        <td><p><b data-bind="text: ID"></b><br/><small><span data-bind="text: Jahr"></span>, Steuerkl. <span data-bind="text: Steuerklasse"></span></small></p></td>
                         <td><p data-bind="text: EinkommenBruttoMonEur"></p></td>
                         <td><p data-bind="text: FirmenwagenBruttolistenpreisEur"></p></td>
                         <td><p data-bind="text: EinkommenNettoMonEur"></p></td>
@@ -149,7 +149,7 @@
                         <div class="control-group">
                             <label class="control-label" for="inputID">Bezeichnung</label>
                             <div class="controls">
-                                <input data-bind="value: ID" type="text" id="inputID" placeholder="Bezeichnung" style="width: 150px;">
+                                <input data-bind="value: ID" type="text" id="inputID" placeholder="Bezeichnung" readonly="readonly" style="width: 150px;">
                             </div>
                         </div>
                         <div class="control-group">
@@ -229,8 +229,12 @@
                         <table class="table">
                             <tbody>
                                 <tr>
-                                    <th scope="row">Bezeichnung:</th>
-                                    <td><span data-bind="text: ID"></td>
+                                    <th class="table-info" scope="row">Bezeichnung:</th>
+                                    <td class="table-info" ><span data-bind="text: ID"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Jahr / Steuerklasse:</span></th>
+                                    <td><span data-bind="text: Jahr"></span> / <span data-bind="text: Steuerklasse"></span></td>
                                 </tr>
                                 <tr>
                                     <th class="table-primary" scope="row">Nettoeinkommen p.M.:</span></th>
@@ -287,7 +291,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+    </div>
 
 <script>
 
@@ -342,6 +346,14 @@
         var self = this;
         self.APIURI = '/api/v1/';
         self.einkommensfaelle = ko.observableArray();
+
+        self.sortedEinkommensfaelle = ko.computed(function() {
+            return self.einkommensfaelle().sort(function (left, right) {
+                var l = left.ID().toLowerCase();
+                var r = right.ID().toLowerCase();
+                return l.localeCompare(r);
+            });
+        });
 
         self.ajax = function(uri, method, data) {
             var request = {
@@ -479,11 +491,27 @@
         }
 
         self.addBruttoEinkommensfall = function(bruttoeinkommensfall) {
-            self.ajax(self.APIURI, 'POST', bruttoeinkommensfall).done(function() {
-                self.ajax(self.APIURI + bruttoeinkommensfall.ID, 'GET').done(function(data) { 
-                    self.addEinkommensFall(data)
-                });
-            });
+            var request = {
+                url: self.APIURI,
+                type: 'POST',
+                contentType: "application/json",
+                accepts: "application/json",
+                cache: false,
+                dataType: 'json',
+                data: JSON.stringify(bruttoeinkommensfall),
+                error: function(jqXHR) {
+                  console.log("ajax error " + jqXHR.status);
+                  if (jqXHR.status == 409) {
+                      alert("Bezeichnung " + bruttoeinkommensfall.ID + " kann nicht mehrfach verwendet werden.");
+                  }
+                },
+                success: function(data) {
+                    self.ajax(self.APIURI + bruttoeinkommensfall.ID, 'GET').done(function(data) {
+                        self.addEinkommensFall(data)
+                    });
+                }
+            };
+            $.ajax(request);
         }
         self.updateBruttoEinkommensfall = function(bruttoeinkommensfall) {
             self.ajax(self.APIURI + bruttoeinkommensfall.ID, 'PUT', bruttoeinkommensfall).done(function() {
@@ -526,6 +554,9 @@
                 Kinder: self.Kinder(),
                 Kirche: self.Kirche()
             });
+            self.ID("");
+            self.FirmenwagenBruttolistenpreisEur("");
+            self.EntfernungWohnortArbeitsortKM("");
         }
 
     }

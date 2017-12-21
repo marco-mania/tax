@@ -49,16 +49,20 @@ func TaxHandler(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Path[len("/api/v1/"):]
 		if len(id) > 0 {
 
+			var ergebnis models.EinkommensFall
+
 			eingabefallbrutto, found := db.FindBy(id)
 			if !found {
+
 				http.Error(w, "Not Found", http.StatusNotFound)
+
+			} else {
+
+				ausgabefallnetto := models.BerechneEinkommenNettoEur(eingabefallbrutto)
+				ergebnis.Brutto = eingabefallbrutto
+				ergebnis.Netto = ausgabefallnetto
+
 			}
-
-			ausgabefallnetto := models.BerechneEinkommenNettoEur(eingabefallbrutto)
-
-			var ergebnis models.EinkommensFall
-			ergebnis.Brutto = eingabefallbrutto
-			ergebnis.Netto = ausgabefallnetto
 
 			output, err = json.Marshal(ergebnis)
 
@@ -104,13 +108,12 @@ func TaxHandler(w http.ResponseWriter, r *http.Request) {
 		_, found := db.FindBy(fall.ID)
 		if found {
 			http.Error(w, "Already exists", http.StatusConflict)
+		} else {
+			db.Save(fall.ID, fall)
+			w.Header().Set("Location", r.URL.Path+"/"+fall.ID)
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusCreated)
 		}
-
-		db.Save(fall.ID, fall)
-
-		w.Header().Set("Location", r.URL.Path+"/"+fall.ID)
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusCreated)
 
 		w.Write([]byte("{}"))
 
@@ -119,25 +122,29 @@ func TaxHandler(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Path[len("/api/v1/"):]
 		_, found := db.FindBy(id)
 		if !found {
+
 			http.Error(w, "Not Found", http.StatusNotFound)
+
+		} else {
+
+			input, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+
+			var fall models.EinkommensFallBrutto
+			err = json.Unmarshal(input, &fall)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+
+			db.Save(fall.ID, fall)
+
+			w.Header().Set("Location", r.URL.Path+"/"+fall.ID)
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusCreated)
+
 		}
-
-		input, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-
-		var fall models.EinkommensFallBrutto
-		err = json.Unmarshal(input, &fall)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-
-		db.Save(fall.ID, fall)
-
-		w.Header().Set("Location", r.URL.Path+"/"+fall.ID)
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusCreated)
 
 		w.Write([]byte("{}"))
 
@@ -146,19 +153,25 @@ func TaxHandler(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Path[len("/api/v1/"):]
 		_, found := db.FindBy(id)
 		if !found {
+
 			http.Error(w, "Not Found", http.StatusNotFound)
+
+		} else {
+
+			db.Remove(id)
+
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusOK)
+
 		}
-
-		db.Remove(id)
-
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusOK)
 
 		w.Write([]byte("{}"))
 
 	default:
 
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+
+		w.Write([]byte("{}"))
 
 	}
 
