@@ -25,6 +25,7 @@ import (
 	"github.com/marco-mania/tax/helpers"
 )
 
+// § 32a EStG – Einkommensteuertarif
 var parameters = `[
     {
         "Jahr": 2016,
@@ -93,6 +94,41 @@ var parameters = `[
         "z5a": 0.0,
         "z5b": 0.45,
         "z5c": -16164.53,
+        "Solidaritaetszuschlag": 0.055,
+        "Kirchensteuer": 0.09
+	},
+	{
+        "Jahr": 2018,
+        "KrankenversicherungArbeitnehmeranteil": 0.073,
+        "KrankenversicherungArbeitgeberanteil": 0.073,
+        "KrankenversicherungArbeitnehmeranteilErmaessigt": 0.07,
+        "KrankenversicherungArbeitgeberanteilErmaessigt": 0.07,
+        "RentenversicherungArbeitnehmeranteil": 0.093,
+        "RentenversicherungArbeitgeberanteil": 0.093,
+        "KorrekturfaktorTeilVorsorgepauschaleRentenversicherung": 0.68,
+        "ArbeitslosenversicherungArbeitnehmeranteil": 0.015,
+        "ArbeitslosenversicherungArbeitgeberanteil": 0.015,
+        "PflegeversicherungArbeitnehmeranteil": 0.01275,
+        "PflegeversicherungArbeitgeberanteil": 0.01275,
+        "PflegeversicherungZuschlagFuerKinderlose": 0.0025,
+        "BeitragsbemessungsgrenzeKrankenPflegeversicherung": 4425.0,
+        "BeitragsbemessungsgrenzeArbeitslosenRentenversicherung": 6500.0,
+        "z2": 9000.0,
+		"z2a": 0.000009978,
+        "z2b": 0.14,
+        "z2c": 0.0,
+		"z3": 13997.0,
+		"z3a": 0.0000022013,
+        "z3b": 0.2397,
+        "z3c": 948.49,
+        "z4": 54949.0,
+        "z4a": 0.0,
+        "z4b": 0.42,
+        "z4c": -8621.75,
+        "z5": 260532.0,
+        "z5a": 0.0,
+        "z5b": 0.45,
+        "z5c": -16437.7,
         "Solidaritaetszuschlag": 0.055,
         "Kirchensteuer": 0.09
     }
