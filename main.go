@@ -35,7 +35,7 @@ func main() {
 
 	http.HandleFunc("/api/v1/", handlers.TaxHandler)
 
-	fmt.Println("Service TAX v2 (API v1) starting and listen on http://localhost:8001/ ...")
+	fmt.Println("Service TAX v3 (API v1) starting and listen on http://localhost:8001/ ...")
 
 	err := http.ListenAndServe("localhost:8001", nil)
 	if err != nil {
