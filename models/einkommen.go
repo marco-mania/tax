@@ -105,7 +105,7 @@ var parameters = `[
         "KrankenversicherungArbeitgeberanteilErmaessigt": 0.07,
         "RentenversicherungArbeitnehmeranteil": 0.093,
         "RentenversicherungArbeitgeberanteil": 0.093,
-        "KorrekturfaktorTeilVorsorgepauschaleRentenversicherung": 0.68,
+        "KorrekturfaktorTeilVorsorgepauschaleRentenversicherung": 0.72,
         "ArbeitslosenversicherungArbeitnehmeranteil": 0.015,
         "ArbeitslosenversicherungArbeitgeberanteil": 0.015,
         "PflegeversicherungArbeitnehmeranteil": 0.01275,
