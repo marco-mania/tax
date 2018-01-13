@@ -29,7 +29,7 @@ import (
 
 func main() {
 
-	box := packr.NewBox("./app/web")
+	box := packr.NewBox("./static/web")
 
 	http.Handle("/", http.FileServer(box))
 
