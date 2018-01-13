@@ -14,12 +14,14 @@ Features:
 * Bootstrap - <https://getbootstrap.com/>
 * Knockout - <http://knockoutjs.com/>
 
-## Run
+## Build & Run on Linux
 
 In the tax folder just execute
 
 ```Shell
-go run main.go
+packr
+GOOS=linux go build -ldflags="-s -w" -o tax-linux-amd64 main.go
+./tax-linux-amd64
 ```
 
 Open <http://localhost:8001/>
@@ -29,4 +31,3 @@ Open <http://localhost:8001/>
 TAX itself is licensed under the GPLv3 (<https://www.gnu.org/licenses/gpl-3.0.de.html>).
 
 All bundled components are Free/Open-Source software with a known and approved open source license.
-
