@@ -20,7 +20,7 @@ In the tax folder just execute
 
 ```Shell
 packr
-GOOS=linux go build -ldflags="-s -w" -o tax-linux-amd64 main.go
+GOOS=linux go build -ldflags="-s -w" -o tax-linux-amd64
 ./tax-linux-amd64
 ```
 

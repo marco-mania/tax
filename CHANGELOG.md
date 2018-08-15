@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 4 - 2018-08-15
+
+* Fixed header in source code
+* Modified README
+
 ## Version 3 - 2018-01-13
 
 * Fix in parameters for 2018
